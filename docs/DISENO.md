@@ -29,9 +29,8 @@ El área de datos de un proveedor de nube debe ingestar, limpiar, conformar y pu
 | Velocidad | Eventos llegan en micro-lotes; requisito near real-time | Structured Streaming con watermark y checkpoint |
 | Variedad | CSV (maestros), JSONL (eventos), `tags_json` anidado, evolución de esquema v1→v2 | Esquemas explícitos; compatibilización v1/v2 en Silver |
 | Veracidad | `value` como texto (1 309) y nulo (877), `unit` nulo (2 075), 211 costos < −0.01 (hasta −154 USD), 48 spikes ≥ 100 USD (hasta 317 USD), CSAT fuera de rango, **7 371 eventos (17 %) anteriores a la creación del recurso** (ver §3) | Reglas de calidad, quarantine, flags de anomalía |
-| Valor | Decisiones de costo (FinOps), servicio (Soporte), producto (GenAI/carbono) | Marts Gold + serving query-first en Cassandra |
+| Valor | Decisiones de costo (FinOps), servicio (Soporte), producto (GenAI/carbono), al tener una serie de objetivos asumidos, necesitamos tener la capacidad de transformar grandes cantidades de datos sin procesar en información útil y rentable para la toma de decisiones que impacten positivamente en nuestro negocio. | Marts Gold + serving query-first en Cassandra |
 
-> Honestidad técnica: el dataset de curso cabe en una máquina. La justificación de Big Data se apoya en la **proyección de escala** y en velocidad/variedad/veracidad, no en el tamaño actual.
 
 ## 3. Inventario y perfil de fuentes
 Perfil generado por `src/exploration/profile_landing_csv.py` (evidencia en `evidence/perfil_fuentes_csv.md`).
@@ -114,7 +113,9 @@ flowchart LR
 ## 5. Patrón elegido: Lambda
 **Decisión:** Lambda — batch para maestros, facturación y encuestas; streaming para `usage_events_stream` con ventanas, watermark e idempotencia.
 
-**Por qué:** (a) las fuentes tienen naturalezas distintas: maestros y facturación cambian poco y son mensuales/diarios, los eventos son continuos; (b) hacer Kappa obligaría a modelar maestros como streams sin ganancia de latencia; (c) Lambda mapea 1:1 con el requisito invariable de la consigna; (d) ambas ramas convergen en las mismas capas Silver/Gold, lo que evita duplicar lógica de negocio.
+**Por qué:** (a) las fuentes tienen naturalezas distintas: maestros y facturación cambian poco y son mensuales/diarios, los eventos son continuos, Los eventos de uso llegan todo el tiempo (unos 720 por día) y FinOps los necesita casi en tiempo real; por eso van por streaming. Los clientes, usuarios, recursos, tickets, encuestas y la facturación cambian poco (la facturación es mensual); por eso van por batch. La consigna (4.3) describe justamente este reparto para Lambda; 
+(b) hacer Kappa obligaría a modelar maestros como streams sin ganancia de latencia; 
+(c) Lambda mapea 1:1 con el requisito invariable de la consigna; (d) ambas ramas convergen en las mismas capas Silver/Gold, lo que evita duplicar lógica de negocio.
 **Trade-off aceptado:** dos caminos de código que mantener. **Mitigación:** funciones de transformación compartidas (`src/common/`) y un único destino Gold.
 **Alternativa descartada:** Kappa (re-stream de todo) — mayor complejidad operativa para fuentes sin requisito de latencia.
 
@@ -146,9 +147,9 @@ Raíz: `datalake/{landing,bronze,silver,gold,quarantine,_checkpoints}/`
 |---|---|---|---|---|---|
 | Landing | Archivos originales | CSV / JSONL | — (inmutable) | Permanente | Solo lectura; nunca se modifica |
 | Bronze | Mismo grano que la fuente, tipado explícito, `ingest_ts`, `source_file` | Parquet (snappy) | Eventos: `event_date`; maestros: sin partición o `ingest_date` | Permanente (reprocesable) | Esquema válido y dedupe técnico |
+| Quarantine | Registros inválidos + motivo + `source_file` | Parquet | `rule_id` / `ingest_date` | 90 días (propuesto) | Revisión manual / reproceso |
 | Silver | Conformado, joins, outliers tratados, v1/v2 unificado | Parquet | `usage_date` (60 particiones diarias; ~720 filas c/u: se valida con `coalesce`) | 12 meses (propuesto) | Pasa reglas de calidad |
 | Gold | Marts de negocio | Parquet | Según grano (`usage_date`, `month`) | 12 meses (propuesto) | Agregación validada y conciliada |
-| Quarantine | Registros inválidos + motivo + `source_file` | Parquet | `rule_id` / `ingest_date` | 90 días (propuesto) | Revisión manual / reproceso |
 
 **Naming:** `bronze/<fuente>/`, `silver/<entidad>/`, `gold/<mart>/` en snake_case; columnas en snake_case en inglés.
 **Justificación de particiones:** los eventos se consultan por rango de fechas → partición por fecha (60 días). Con ~720 eventos por día, cada partición es muy pequeña (problema de *small files*): se usa `coalesce(1)` por partición y se documenta que en producción convendría particionar por mes o por semana. `service` (6 valores) no se usa como partición por la misma razón.

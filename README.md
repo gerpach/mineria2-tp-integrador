@@ -1,4 +1,4 @@
-# Cloud Provider Analytics — Proyecto Integrador (Minería de Datos II · ISTEA 2C 2026)
+# Trabajo Práctico Integrador (Minería de Datos II · ISTEA 2C 2026)
 
 Pipeline ETL + Streaming + Serving para un proveedor de nube: PySpark, Structured Streaming, Parquet y Cassandra/AstraDB. Dominios: **FinOps, Soporte y Producto/Usage**.
 
