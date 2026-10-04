@@ -1,4 +1,4 @@
-# Minería II - Trabajo Práctico Integrador — Documento de diseño (Primera entrega)
+# Cloud Provider Analytics — Documento de diseño (Primera entrega)
 Minería de Datos II · ISTEA · 2C 2026 · Versión 1.0 (07/10/2026)
 
 ## 1. Problema, usuarios y objetivos medibles
@@ -25,10 +25,10 @@ El área de datos de un proveedor de nube debe ingestar, limpiar, conformar y pu
 
 | V | Evidencia en el caso | Decisión de arquitectura |
 |---|---|---|
-| Volumen | 120 archivos JSONL × 360 eventos = **~43 200 eventos** (~13 MB), 60 días, 80 orgs, 400 recursos; en producción crece por org × recurso × minuto | Parquet columnar particionado; Spark distribuido |
+| Volumen | **43 200 eventos en 120 archivos** (12,93 MB), 60 días (~720 eventos/día); maestros con 80 orgs y 400 recursos; en producción crece por org × recurso × minuto | Parquet columnar particionado; Spark distribuido |
 | Velocidad | Eventos llegan en micro-lotes; requisito near real-time | Structured Streaming con watermark y checkpoint |
 | Variedad | CSV (maestros), JSONL (eventos), `tags_json` anidado, evolución de esquema v1→v2 | Esquemas explícitos; compatibilización v1/v2 en Silver |
-| Veracidad | `value` como texto (3 %), `unit` nulo, 36 costos < −0.01, 9 spikes ≥ 100 USD, CSAT fuera de rango, eventos previos a la creación del recurso (ver §3) | Reglas de calidad, quarantine, flags de anomalía |
+| Veracidad | `value` como texto (1 309) y nulo (877), `unit` nulo (2 075), 211 costos < −0.01 (hasta −154 USD), 48 spikes ≥ 100 USD (hasta 317 USD), CSAT fuera de rango, **7 371 eventos (17 %) anteriores a la creación del recurso** (ver §3) | Reglas de calidad, quarantine, flags de anomalía |
 | Valor | Decisiones de costo (FinOps), servicio (Soporte), producto (GenAI/carbono) | Marts Gold + serving query-first en Cassandra |
 
 > Honestidad técnica: el dataset de curso cabe en una máquina. La justificación de Big Data se apoya en la **proyección de escala** y en velocidad/variedad/veracidad, no en el tamaño actual.
@@ -45,26 +45,26 @@ Perfil generado por `src/exploration/profile_landing_csv.py` (evidencia en `evid
 | marketing_touches.csv | 1500 | `touch_id` | Batch diario | **96 `converted` sin `clicked`** (inconsistencia lógica) |
 | nps_surveys.csv | 92 | (`org_id`, `survey_date`) | Batch mensual | `nps_score` nulo 20.7 %; `comment` nulo 10.9 % |
 | billing_monthly.csv | 240 | `invoice_id`; 3 meses × 80 orgs | Batch mensual | `credits` nulo 57 % (¿0?); **13 `subtotal` negativos**; monedas USD/EUR/ARS con `exchange_rate_to_usd` |
-| usage_events_stream/*.jsonl | 120 archivos × 360 = ~43 200 eventos (perfilados 20 archivos / 7 200 eventos) | `event_id` (`evt_` + 12 car.) | Streaming (micro-lotes) | Ver §3.1 |
+| usage_events_stream/*.jsonl | 120 archivos × 360 = **43 200 eventos** (12,93 MB) | `event_id` (`evt_` + 12 car.) | Streaming (micro-lotes) | Ver §3.1 |
 
-### 3.1 Perfil de `usage_events_stream` (muestra de 20 de 120 archivos = 7 200 eventos)
-Evidencia: `evidence/perfil_usage_events.md` (generado por `src/exploration/profile_usage_events.py`; se re-ejecuta sobre los 120 archivos antes de la entrega).
+### 3.1 Perfil de `usage_events_stream` (120 archivos = 43 200 eventos)
+Evidencia: `evidence/perfil_usage_events.md`, generado por `src/exploration/profile_usage_events.py` sobre los 120 archivos de Landing (solo lectura).
 
 | Aspecto | Hallazgo | Implicancia de diseño |
 |---|---|---|
-| Esquema v1 (1 804 ev.) | `event_id, timestamp, org_id, resource_id, service, region, metric, value, unit, cost_usd_increment, schema_version` | Esquema base explícito |
-| Esquema v2 (5 396 ev.) | v1 + `carbon_kg` (siempre) + `genai_tokens` (**solo** servicio `genai`, 518 eventos) | Silver unifica: en v1 ambos quedan `NULL` |
-| Corte de versión | v1: 03–17/07; v2: desde 18/07. Sin solapamiento | Se puede validar `schema_version` contra la fecha |
-| Métricas | `requests` (unit `count`), `cpu_hours` (`hours`), `storage_gb_hours` (`gb_hours`); 6 servicios y 7 regiones, ya homogéneos en la muestra | Pivot de `metric` para features |
-| `value` | `float` 6 817, **`str` 223** (3 %, todas casteables, p. ej. `"8.9427"`), `null` 160 | Cast con fallback controlado (Q4) |
-| `unit` | **nulo en 372 eventos; 361 de ellos con `value` informado** | Regla Q3; `unit` imputable desde `metric` |
-| `cost_usd_increment` | mediana 1.05 USD; **36 < −0.01** (mín. −14.55); **9 ≥ 100 USD** (máx. 194.84) | Q2 + flag de anomalía; MAD por servicio |
-| `carbon_kg` | 0 – 0.032; 460 ceros | Válido; no es outlier |
-| Ritmo | 120 eventos/día (100–138) durante 60 días | Volumen estable, sin picos de carga |
-| **Orden temporal** | **Los 20 archivos abarcan todo el rango 03/07–31/08** y los timestamps no están ordenados dentro del archivo | **Crítico para watermark y dedupe (ver §5.1)** |
-| Duplicados | 0 `event_id` duplicados en la muestra | Dedupe igual obligatorio: puede haber entre archivos no vistos |
-| Integridad | 0 `org_id`/`resource_id` huérfanos; `org`, `service` y `region` del evento coinciden con `resources.csv` en el 100 % | Join evento→recurso confiable |
-| **Anomalía temporal** | **1 212 eventos (17 %) ocurren antes del `created_at` del recurso** | Regla Q8: flag, no descarte |
+| Esquema v1 (10 800 ev., 25 %) | `event_id, timestamp, org_id, resource_id, service, region, metric, value, unit, cost_usd_increment, schema_version` | Esquema base explícito |
+| Esquema v2 (32 400 ev., 75 %) | v1 + `carbon_kg` (siempre) + `genai_tokens` (3 132 eventos, solo servicio `genai`; 0 fuera de regla) | Silver unifica: en v1 ambos quedan `NULL` |
+| Corte de versión | v1: 03–17/07/2025; v2: desde 18/07/2025 | Se valida `schema_version` contra la fecha |
+| Métricas y unidades | `requests` (`count`), `cpu_hours` (`hours`), `storage_gb_hours` (`gb_hours`); 6 servicios y 7 regiones | Pivot de `metric` para features |
+| `value` | float, **string 1 309 (3,0 %, 0 no casteables)**, **nulo 877 (2,0 %)** | Cast con fallback controlado (Q4) |
+| `unit` | **nulo 2 075 (4,8 %); 2 038 con `value` informado** | Regla Q3; `unit` imputable desde `metric` (1:1) |
+| `cost_usd_increment` | mediana 1,00 USD; **211 < −0.01 (0,5 %; mín. −154,46)**; **48 ≥ 100 USD (0,1 %; máx. 317,43)** | Q2 + flag; anomalías con MAD por servicio |
+| `carbon_kg` | 0 – 0,0326; 2 641 ceros | Válido; los ceros no son outliers |
+| Ritmo | ~720 eventos/día durante 60 días | Volumen estable |
+| **Orden temporal** | **Los 120 archivos abarcan todo el rango 03/07–31/08**; timestamps desordenados | **Crítico para watermark y dedupe (ver §5.1)** |
+| Duplicados | **0 `event_id` duplicados, ni dentro ni entre archivos** | Dedupe igual obligatorio por idempotencia ante re-ingesta |
+| Integridad | 0 `resource_id` huérfanos; `org_id`, `service` y `region` coinciden con `resources.csv` en el 100 % | Join evento→recurso confiable |
+| **Anomalía temporal** | **7 371 eventos (17,1 %) anteriores al `created_at` del recurso** | Regla Q8: flag, no descarte |
 
 **Integridad referencial de los maestros:** 0 `org_id` huérfanos en todas las fuentes respecto de `customers_orgs`. Cada org tiene exactamente 3 facturas.
 
@@ -146,12 +146,12 @@ Raíz: `datalake/{landing,bronze,silver,gold,quarantine,_checkpoints}/`
 |---|---|---|---|---|---|
 | Landing | Archivos originales | CSV / JSONL | — (inmutable) | Permanente | Solo lectura; nunca se modifica |
 | Bronze | Mismo grano que la fuente, tipado explícito, `ingest_ts`, `source_file` | Parquet (snappy) | Eventos: `event_date`; maestros: sin partición o `ingest_date` | Permanente (reprocesable) | Esquema válido y dedupe técnico |
-| Silver | Conformado, joins, outliers tratados, v1/v2 unificado | Parquet | `usage_date` (60 particiones diarias; ~120 filas c/u: se valida con `coalesce`) | 12 meses (propuesto) | Pasa reglas de calidad |
+| Silver | Conformado, joins, outliers tratados, v1/v2 unificado | Parquet | `usage_date` (60 particiones diarias; ~720 filas c/u: se valida con `coalesce`) | 12 meses (propuesto) | Pasa reglas de calidad |
 | Gold | Marts de negocio | Parquet | Según grano (`usage_date`, `month`) | 12 meses (propuesto) | Agregación validada y conciliada |
 | Quarantine | Registros inválidos + motivo + `source_file` | Parquet | `rule_id` / `ingest_date` | 90 días (propuesto) | Revisión manual / reproceso |
 
 **Naming:** `bronze/<fuente>/`, `silver/<entidad>/`, `gold/<mart>/` en snake_case; columnas en snake_case en inglés.
-**Justificación de particiones:** los eventos se consultan por rango de fechas → partición por fecha (60 días). Con ~120 eventos por día, cada partición es muy pequeña (problema de *small files*): se usa `coalesce(1)` por partición y se documenta que en producción convendría particionar por mes o por semana. `service` (6 valores) no se usa como partición por la misma razón.
+**Justificación de particiones:** los eventos se consultan por rango de fechas → partición por fecha (60 días). Con ~720 eventos por día, cada partición es muy pequeña (problema de *small files*): se usa `coalesce(1)` por partición y se documenta que en producción convendría particionar por mes o por semana. `service` (6 valores) no se usa como partición por la misma razón.
 **Metadatos:** esquema por tabla en `docs/diccionario_datos.md`, columnas técnicas `ingest_ts`, `source_file`, `schema_version`, `pipeline_run_id`.
 
 ### 7.2 Reglas de calidad iniciales (verificables)
@@ -159,12 +159,12 @@ Raíz: `datalake/{landing,bronze,silver,gold,quarantine,_checkpoints}/`
 |---|---|---|
 | Q1 | `event_id` no nulo y único | Nulo → quarantine; duplicado → conservar primero |
 | Q2 | `cost_usd_increment >= -0.01` | Menor → quarantine + flag de anomalía |
-| Q3 | `unit` no nulo cuando existe `value` | Quarantine (361 casos en la muestra); alternativa: imputar `unit` desde `metric` (relación 1:1) |
-| Q4 | `value` casteable a numérico | Cast con fallback; si falla → null + flag (en la muestra: 223 strings, todas casteables; 160 nulos) |
+| Q3 | `unit` no nulo cuando existe `value` | Quarantine (2 038 casos, 4,7 %); alternativa: imputar `unit` desde `metric` (relación 1:1) |
+| Q4 | `value` casteable a numérico | Cast con fallback; si falla → null + flag (1 309 strings, todas casteables; 877 nulos) |
 | Q5 | `csat` en [1,5] | Fuera de rango → null + flag |
 | Q6 | `org_id` existe en `customers_orgs` | Huérfano → quarantine |
 | Q7 | `subtotal >= 0` en billing | Negativo → flag (posible nota de crédito) |
-| Q8 | `timestamp` del evento ≥ `created_at` del recurso | Flag `event_before_resource` (1 212 casos en la muestra); no se descarta |
+| Q8 | `timestamp` del evento ≥ `created_at` del recurso | Flag `event_before_resource` (7 371 casos, 17,1 %); no se descarta |
 | Q9 | `genai_tokens` solo si `service = genai` y `schema_version = 2` | Fuera de regla → flag |
 
 ### 7.3 Marts Gold previstos
@@ -208,9 +208,9 @@ Spark reemplaza Map/Shuffle/Reduce por `select/withColumn`, `groupBy` (shuffle) 
 |---|---|---|---|---|
 | 1 | Colab sin persistencia → se pierde el Lake | Alta | Alto | Lake en Google Drive o disco local; script de reinicio |
 | 2 | Límites del plan gratuito de AstraDB | Media | Alto | Cargar solo Gold; datos de demo reducidos |
-| 3 | Perfil de eventos hecho sobre 20 de 120 archivos | Media | Medio | Re-ejecutar el script sobre los 120 antes de congelar el `StructType`; las reglas se parametrizan |
+| 3 | Aparece una `schema_version` nueva en datos futuros | Baja | Medio | `schema_version` explícito y regla que alerta versiones desconocidas; compatibilidad v1/v2 ya diseñada |
 | 3b | Watermark corto descarta eventos válidos (archivos con todo el rango temporal) | Alta | Alto | Watermark ≥ 61 días o dedupe sin estado temporal (ver §5.1) |
-| 3c | Archivos pequeños (~120 eventos/día) | Alta | Bajo | `coalesce`, partición diaria con 1 archivo; documentar alternativa mensual |
+| 3c | Archivos pequeños (~720 eventos/día) | Alta | Bajo | `coalesce`, partición diaria con 1 archivo; documentar alternativa mensual |
 | 4 | Late data / spikes mal tratados | Media | Medio | Watermark parametrizable; MAD robusto a outliers |
 | 5 | Subtotales negativos y `credits` nulo ambiguos | Alta | Medio | Documentar supuesto (`credits` nulo = 0); flag, no borrar |
 | 6 | Credenciales expuestas en el repo | Baja | Alto | `.gitignore`, variables de entorno, `settings.example.yaml` |
@@ -232,4 +232,4 @@ Spark reemplaza Map/Shuffle/Reduce por `select/withColumn`, `groupBy` (shuffle) 
 **Recursos:** Google Colab, cuenta AstraDB (free tier), GitHub, Drive o disco local para el Lake.
 
 ## 12. Próximos pasos
-Re-ejecutar el perfil sobre los 120 JSONL y congelar el esquema (ya definido para v1/v2) → Bronze batch (3 maestros) → Bronze streaming → Silver y reglas Q1–Q7 → Gold `org_daily_usage_by_service` → Cassandra.
+Bronze batch (3 maestros) → Bronze streaming → Silver y reglas Q1–Q7 → Gold `org_daily_usage_by_service` → Cassandra.

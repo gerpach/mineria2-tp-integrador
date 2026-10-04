@@ -11,6 +11,6 @@
 | D7 | 2026-10 | Cassandra modelada query-first: una tabla por consulta | Tabla única | Lecturas por partición sin ALLOW FILTERING | Aprobada |
 | D8 | 2026-10 | Credenciales solo por variables de entorno | Archivo en repo | Criterio de aceptación: repo sin secretos | Aprobada |
 | D9 | 2026-10 | Watermark parametrizable y largo (≥ 61 días) para la demo; dedupe de `event_id` sin depender del estado temporal | Watermark de 10 min | Cada archivo cubre todo el rango temporal: un watermark corto descartaría eventos válidos | Abierta |
-| D10 | 2026-10 | Partición diaria en Silver con `coalesce(1)` | Partición mensual; por servicio | ~120 eventos/día → small files; la consulta típica es por rango de fechas | Abierta |
-| D11 | 2026-10 | `unit` nulo con `value`: quarantine (Q3 de la consigna) y evaluar imputación desde `metric` | Imputar siempre | La consigna exige la regla; la relación metric→unit es 1:1 | Abierta |
-| D12 | 2026-10 | Eventos anteriores al `created_at` del recurso: flag, no descarte | Descartar | 17 % del total; descartar sesgaría costos | Abierta |
+| D10 | 2026-10 | Partición diaria en Silver con `coalesce(1)` | Partición mensual; por servicio | ~720 eventos/día → archivos diminutos; la consulta típica es por rango de fechas | Abierta |
+| D11 | 2026-10 | `unit` nulo con `value`: quarantine (Q3 de la consigna; 2 038 casos) y evaluar imputación desde `metric` | Imputar siempre | La consigna exige la regla; la relación metric→unit es 1:1 | Abierta |
+| D12 | 2026-10 | Eventos anteriores al `created_at` del recurso: flag, no descarte | Descartar | 7 371 eventos (17,1 %); descartar sesgaría costos | Abierta |

@@ -1,5 +1,5 @@
 # Diccionario de datos inicial (Landing)
-Columnas tomadas del perfil real de los CSV. Esquema de `usage_events_stream` obtenido de una muestra de 20 de 120 archivos (7 200 eventos).
+Columnas tomadas del perfil real de los CSV. Esquema de `usage_events_stream` obtenido del perfil de los 120 archivos (43 200 eventos).
 
 | Fuente | Columna | Tipo propuesto (Bronze) | Nota |
 |---|---|---|---|
@@ -32,10 +32,10 @@ Columnas tomadas del perfil real de los CSV. Esquema de `usage_events_stream` ob
 | usage_events | org_id, resource_id, service, region | string | FK a customers_orgs / resources; 6 servicios, 7 regiones |
 | usage_events | metric | string | `requests`, `cpu_hours`, `storage_gb_hours` |
 | usage_events | value | double | Llega como número, string numérico o null → cast con fallback |
-| usage_events | unit | string | `count`, `hours`, `gb_hours`; nulo en 5 % |
-| usage_events | cost_usd_increment | double | Puede ser negativo; spikes hasta ~195 USD |
+| usage_events | unit | string | `count`, `hours`, `gb_hours`; nulo en 4,8 % |
+| usage_events | cost_usd_increment | double | Puede ser negativo (hasta −154 USD); spikes hasta ~317 USD |
 | usage_events | schema_version | int | 1 (hasta 17/07/2025) / 2 (desde 18/07/2025) |
-| usage_events | carbon_kg | double | Solo v2; 0–0.032 |
-| usage_events | genai_tokens | long | Solo v2 y servicio `genai` |
+| usage_events | carbon_kg | double | Solo v2; 0–0.0326 (2 641 ceros) |
+| usage_events | genai_tokens | long | Solo v2 y servicio `genai` (3 132 eventos) |
 | *todas (Bronze)* | ingest_ts | timestamp | Columna técnica |
 | *todas (Bronze)* | source_file | string | Columna técnica |

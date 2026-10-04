@@ -37,7 +37,7 @@ python src/exploration/profile_usage_events.py "F:\Istea\Año2\MineríaDatos2\Pr
 ```
 Salidas: `evidence/perfil_fuentes_csv.md` y `evidence/perfil_usage_events.md`. Ambos scripts solo **leen** Landing.
 
-> La evidencia incluida en el repo para eventos corresponde a una **muestra de 20 de los 120 archivos**. Re-ejecutar el paso 2 sobre los 120 antes de entregar.
+> La evidencia de eventos corresponde a los **120 archivos** de Landing (43 200 eventos).
 
 ## Convenciones
 snake_case en tablas y columnas · Parquet snappy · columnas técnicas `ingest_ts` y `source_file` en Bronze · sin secretos en el repo (variables de entorno, ver `config/settings.example.yaml`) · una decisión relevante = una fila en `DECISIONS.md`.
