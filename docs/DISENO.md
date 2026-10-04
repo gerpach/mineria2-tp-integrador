@@ -1,4 +1,4 @@
-# Cloud Provider Analytics — Documento de diseño (Primera entrega)
+# Minería II - Trabajo Práctico Integrador — Documento de diseño (Primera entrega)
 Minería de Datos II · ISTEA · 2C 2026 · Versión 1.0 (07/10/2026)
 
 ## 1. Problema, usuarios y objetivos medibles
