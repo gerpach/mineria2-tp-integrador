@@ -1,0 +1,8 @@
+# Credenciales y artefactos locales
+config/settings.yaml
+.env
+*.zip
+secure-connect-*.zip
+datalake/
+__pycache__/
+.ipynb_checkpoints/

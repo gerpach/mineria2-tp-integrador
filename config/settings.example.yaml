@@ -1,0 +1,15 @@
+# Copiar a config/settings.yaml (NO versionar) o definir variables de entorno equivalentes.
+paths:
+  landing_dir:  "F:/Istea/Año2/MineríaDatos2/Proyecto/datalake/landing"
+  lake_root:    "F:/Istea/Año2/MineríaDatos2/Proyecto/datalake"   # bronze/ silver/ gold/ quarantine/ checkpoints/
+streaming:
+  max_files_per_trigger: 5
+  watermark: "10 minutes"       # a validar con el perfil de late data
+  trigger: "availableNow"
+quality:
+  min_cost_increment_usd: -0.01
+cassandra:                       # credenciales SOLO por entorno, nunca en el repo
+  secure_connect_bundle: "${ASTRA_BUNDLE_PATH}"
+  client_id: "${ASTRA_CLIENT_ID}"
+  client_secret: "${ASTRA_CLIENT_SECRET}"
+  keyspace: "cloud_analytics"
