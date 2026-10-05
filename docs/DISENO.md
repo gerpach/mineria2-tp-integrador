@@ -183,6 +183,63 @@ Ejemplo: `usage_by_org_service_day (org_id, service, usage_date DESC) PRIMARY KE
 Los upserts de Cassandra con esa clave natural dan idempotencia de la carga.
 
 ## 8. Flujos de datos con herramientas
+```mermaid
+flowchart LR
+    Title["Arquitectura v1 · Patrón Lambda · 07/10/2026"]
+
+    subgraph FUENTES["Fuentes"]
+        direction TB
+        Batch["FUENTES BATCH<br/>7 CSV"]
+        Stream["FUENTE STREAMING<br/>JSONL en micro-lotes"]
+    end
+
+    subgraph DATALAKE["Data Lake · Parquet particionado por fecha"]
+        direction LR
+        Landing[("LANDING<br/>raw inmutable")]
+        Bronze[("BRONZE<br/>tipos explícitos<br/>ingest_ts, source_file")]
+        Proceso["PROCESAMIENTO<br/>PySpark: limpieza, joins,<br/>features y anomalías"]
+        Silver[("SILVER<br/>conformado, v1 y v2")]
+        Gold[("GOLD<br/>marts FinOps, Soporte,<br/>Producto")]
+    end
+
+    Quarantine["QUARANTINE<br/>registros inválidos"]
+
+    subgraph ENTREGA["Serving y consumo"]
+        direction TB
+        Serving[("SERVING<br/>Cassandra / AstraDB")]
+        Consumo["CONSUMO<br/>herramienta de visualización"]
+    end
+
+    Transversal["CAPACIDADES TRANSVERSALES<br/>gobierno · calidad · seguridad<br/>metadatos y linaje · observabilidad"]
+
+    Title ~~~ Batch
+    Batch --> Landing
+    Stream --> Landing
+    Landing -->|"Ingesta batch · PySpark"| Bronze
+    Landing -->|"Ingesta streaming · Structured Streaming: watermark, dedupe, checkpointing"| Bronze
+    Bronze --> Proceso --> Silver --> Gold --> Serving --> Consumo
+    Bronze -. "registros inválidos" .-> Quarantine
+    Silver -. "validaciones fallidas" .-> Quarantine
+
+    Transversal -. "aplica a toda la plataforma" .-> Landing
+    Transversal -.-> Bronze
+    Transversal -.-> Gold
+    Transversal -.-> Serving
+
+    classDef source fill:#f0f9ff,stroke:#38bdf8,stroke-width:1.5px
+    classDef lake fill:#eef2ff,stroke:#818cf8,stroke-width:1.5px
+    classDef process fill:#f5f3ff,stroke:#a78bfa,stroke-width:1.5px
+    classDef consume fill:#f0fdfa,stroke:#2dd4bf,stroke-width:1.5px
+    classDef control fill:#fff7ed,stroke:#fb923c,stroke-width:1.5px
+    classDef quarantine fill:#fef2f2,stroke:#f87171,stroke-width:1.5px
+
+    class Batch,Stream source
+    class Landing,Bronze,Silver,Gold lake
+    class Proceso process
+    class Serving,Consumo consume
+    class Transversal control
+    class Quarantine quarantine
+```
 - **Batch:** `Landing CSV → spark.read.csv(schema) → + ingest_ts/source_file → Bronze Parquet → limpieza/joins → Silver → agregación → Gold → upsert Cassandra`.
 - **Streaming:** `Landing JSONL → readStream(schema, maxFilesPerTrigger) → withWatermark(ts) → dropDuplicates(event_id) → Bronze (checkpoint) → foreachBatch: reglas → Silver / Quarantine → Gold incremental → Cassandra`.
 - **Herramientas:** PySpark 3.5, Parquet, Google Colab (o equivalente), AstraDB, Python `cassandra-driver` / Spark-Cassandra-Connector, Git.
