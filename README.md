@@ -1,4 +1,4 @@
-# Trabajo Práctico Integrador (Minería de Datos II · ISTEA 2C 2026)
+## Trabajo Práctico Integrador (Minería de Datos II · ISTEA 2C 2026)
 
 Pipeline ETL + Streaming + Serving para un proveedor de nube: PySpark, Structured Streaming, Parquet y Cassandra/AstraDB. Dominios: **FinOps, Soporte y Producto/Usage**.
 
@@ -11,6 +11,16 @@ Pipeline ETL + Streaming + Serving para un proveedor de nube: PySpark, Structure
 | [docs/diccionario_datos.md](docs/diccionario_datos.md) | Diccionario de datos inicial |
 | [DECISIONS.md](DECISIONS.md) | Registro de decisiones |
 | [evidence/](evidence/) | Perfiles de datos generados por los scripts |
+
+## Equipo
+| Integrante | Rol principal | Rol de apoyo |
+|---|---|---|
+| Giuliano Gambino | A definir | A definir |
+| Gabriela Romero | A definir | A definir |
+| Mayra Garate | A definir | A definir |
+| Germán Pacheco | A definir | A definir |
+
+Los roles se definirán en el plan de correcciones posterior al feedback del 07/10 (ver `docs/`).
 
 ## Estructura
 ```
