@@ -54,3 +54,6 @@ snake_case en tablas y columnas · Parquet snappy · columnas técnicas `ingest_
 
 ## Próximos pasos
 Perfilar eventos y fijar esquema → Bronze batch (3 maestros) → Bronze streaming → Silver y calidad → Gold → Cassandra/AstraDB.
+
+## Licencia
+Licencia: MIT (ver LICENSE). El dataset es sintético y fue provisto por la cátedra de Minería de Datos II.
