@@ -4,7 +4,7 @@ paths:
   lake_root:    "F:/Istea/Año2/MineríaDatos2/Proyecto/datalake"   # bronze/ silver/ gold/ quarantine/ checkpoints/
 streaming:
   max_files_per_trigger: 5
-  watermark: "10 minutes"       # a validar con el perfil de late data
+  watermark: "61 days"          # D9: cada archivo cubre todo el rango temporal
   trigger: "availableNow"
 quality:
   min_cost_increment_usd: -0.01
