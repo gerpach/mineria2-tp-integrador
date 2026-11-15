@@ -25,4 +25,8 @@ Base AstraDB serverless (AWS us-east-2), keyspace `cloud_analytics`, tabla `org_
 | database | 59.3881 | 1180.0 |
 | networking | 8.2631 | 733.0 |
 
-El CQL equivalente está en `cql/02_queries.cql`; la captura de su ejecución en el CQL console de Astra se guarda en `evidence/entrega2/astra_cql_console.png`.
+## Captura del CQL console de AstraDB
+
+Las mismas consultas en CQL (`cql/02_queries.cql`) ejecutadas en el CQL console de Astra: `COUNT(*)` = 11 050, 7 filas en la consulta 1 y 4 servicios en la consulta 2, idénticos a la Data API y a Cassandra local. La consulta 2 devuelve 4 servicios porque `org_ktakpuxq` solo tiene recursos de compute, genai, database y networking (sin analytics ni storage en `resources.csv`).
+
+![CQL console de AstraDB](astra_cql_console.png)

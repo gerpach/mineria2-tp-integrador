@@ -125,7 +125,7 @@ docker compose -f infra/docker-compose.yml down    # baja Cassandra
 | [idempotencia.md](evidence/entrega2/idempotencia.md) | Re-ejecución completa: diferencia 0 en todas las capas y en Cassandra |
 | [anomalias.md](evidence/entrega2/anomalias.md) | Componente analítico (MAD): métricas y limitaciones |
 | [cassandra_queries.md](evidence/entrega2/cassandra_queries.md), [cqlsh_salida.md](evidence/entrega2/cqlsh_salida.md) | CQL y resultados de las dos consultas (Cassandra local) |
-| [astra_queries.md](evidence/entrega2/astra_queries.md) | Carga en **AstraDB** (11 050 filas, re-carga sin duplicados) y las dos consultas |
+| [astra_queries.md](evidence/entrega2/astra_queries.md), [astra_cql_console.png](evidence/entrega2/astra_cql_console.png) | Carga en **AstraDB** (11 050 filas, re-carga sin duplicados) y captura de las dos consultas CQL en el CQL console |
 | [logs/](evidence/entrega2/logs/) | Logs de las corridas |
 
 Resultados principales: 43 200 eventos en Bronze (0 duplicados, 0 descartados por watermark) → 40 956 en Silver + 2 244 en quarantine (Q2: 211, Q3: 2 033) → 11 050 filas en Gold (grano único) → 11 050 filas en Cassandra local y en AstraDB; 123 anomalías de costo.
