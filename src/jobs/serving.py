@@ -20,10 +20,16 @@ def connect(cfg: dict):
     c = cfg["cassandra"]
     if c["mode"] == "astra":
         from cassandra.auth import PlainTextAuthProvider
-        if not (c["secure_connect_bundle"] and c["client_id"] and c["client_secret"]):
-            raise RuntimeError("Modo astra: definir ASTRA_BUNDLE_PATH, ASTRA_CLIENT_ID y ASTRA_CLIENT_SECRET")
+        # Autenticación: token de aplicación (AstraCS:...) o el par client_id / client_secret.
+        if c.get("token"):
+            user, password = "token", c["token"]
+        else:
+            user, password = c["client_id"], c["client_secret"]
+        if not (c["secure_connect_bundle"] and user and password):
+            raise RuntimeError("Modo astra: definir ASTRA_BUNDLE_PATH y ASTRA_TOKEN "
+                               "(o ASTRA_CLIENT_ID + ASTRA_CLIENT_SECRET) en el entorno o en .env")
         cluster = Cluster(cloud={"secure_connect_bundle": c["secure_connect_bundle"]},
-                          auth_provider=PlainTextAuthProvider(c["client_id"], c["client_secret"]))
+                          auth_provider=PlainTextAuthProvider(user, password), protocol_version=4)
     else:
         cluster = Cluster(c["hosts"], port=int(c["port"]))
     return cluster, cluster.connect()

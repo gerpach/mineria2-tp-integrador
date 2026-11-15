@@ -30,7 +30,7 @@ flowchart LR
     BE -. "inválidos (Q0-Q3, Q6)" .-> Q
     SC -->|join| SE
     SE -->|"gold.py · groupBy org, día, servicio<br/>+ score MAD de anomalías"| G
-    G -->|"serving.py · cassandra-driver<br/>INSERT = upsert por PK"| CAS
+    G -->|"serving.py · cassandra-driver (local / Astra)<br/>serving_astra_api.py · Data API HTTPS (Astra)<br/>upsert por PK"| CAS
     CAS --> CQL
 
     GOV["Transversal: config externa (YAML + env) · logs por corrida (run_id)<br/>columnas de linaje · tests pytest · evidencias regenerables"]
@@ -47,7 +47,7 @@ flowchart LR
 | `coalesce(1)` como regla | Parámetro `write.coalesce` (default 1 para la demo) | Feedback E1 y D10 |
 | Watermark "10 minutes" en `settings.example.yaml` | `watermark: "61 days"` alineado con D9 + test que lo verifica | Feedback E1 |
 | 5 marts y 5 tablas Cassandra | 1 mart (`org_daily_usage_by_service`) y 1 tabla, que es el alcance de E2 | Consigna 6.2; el resto está en el backlog |
-| Solo AstraDB | Cassandra local en Docker o AstraDB por configuración | D17: plan alternativo de demo |
+| Solo AstraDB | AstraDB (keyspace `cloud_analytics`, poblado) + Cassandra local en Docker como alternativa | D17, D19 |
 | Anomalías "a definir" | Score MAD en Gold (`cost_robust_z`, `is_cost_anomaly`) | D6, D15 |
 
 ## Correspondencia componente → código
@@ -61,7 +61,7 @@ flowchart LR
 | Calidad y quarantine | `src/common/quality.py`, `src/jobs/silver.py` | `datalake/quarantine/usage_events` |
 | Silver | `src/jobs/silver.py` | `datalake/silver/{usage_events,customers_orgs,resources}` |
 | Gold + anomalías | `src/jobs/gold.py`, `src/common/anomaly.py` | `datalake/gold/org_daily_usage_by_service` |
-| Serving | `src/jobs/serving.py`, `cql/*.cql` | tabla Cassandra + consultas |
+| Serving | `src/jobs/serving.py` (driver), `src/jobs/serving_astra_api.py` (Data API), `cql/*.cql` | tabla en AstraDB y Cassandra local + consultas |
 | Orquestación, logs, reset | `src/pipeline.py`, `src/common/logs.py` | `evidence/entrega2/logs/` |
 | Experimentos | `src/experiments/` | `evidence/entrega2/{experimentos,idempotencia}.md` |
 

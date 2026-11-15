@@ -11,7 +11,7 @@ Estado al 18/11/2026. Prioridades según la consigna 6.2 (obligatorio / deseable
 | O3 | Mart `genai_tokens_by_org_date` + tabla | Consulta 5: tokens y costo estimado por día |
 | O4 | Mart `cost_anomaly_mart` con contexto (ya existe el score en Gold) | Tabla consultable por org y fecha |
 | O5 | Consulta 2 en tabla propia si el `IN` + `GROUP BY` resulta limitado en AstraDB | Top-N sin agregación en cliente pesada |
-| O6 | Correr el serving contra **AstraDB** con las credenciales del equipo y capturar resultados | Evidencia de AstraDB además de la local |
+| O6 | Correr el serving por driver CQL + secure connect bundle desde Colab contra AstraDB (en E2 la carga a Astra se hizo por Data API, D19) | Log de `serving.py` en modo astra |
 | O7 | Validar el Quickstart desde un entorno limpio (Colab y una PC) | Checklist ejecutado por otro integrante |
 | O8 | Presentación ejecutiva, video y guion de defensa | Artefactos entregados |
 | O9 | Completar responsables en `docs/GOBIERNO.md` y roles en el README | Tabla sin "a definir" |

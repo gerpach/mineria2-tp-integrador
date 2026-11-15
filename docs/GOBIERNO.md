@@ -31,7 +31,7 @@ Linaje de punta a punta: `landing/usage_events_stream/events_part_XXXX.jsonl` �
 
 ## Seguridad y acceso
 
-- Sin credenciales en el repo: AstraDB solo por `ASTRA_BUNDLE_PATH`, `ASTRA_CLIENT_ID`, `ASTRA_CLIENT_SECRET` (D8). `tests/test_config.py` falla si alguien escribe una credencial en el ejemplo.
+- Sin credenciales en el repo: AstraDB solo por variables de entorno o un `.env` local ignorado por git (`ASTRA_TOKEN`, `ASTRA_BUNDLE_PATH`, `ASTRA_DB_ID`; plantilla en `.env.example`) (D8). `tests/test_config.py` falla si alguien escribe una credencial en el ejemplo.
 - `config/settings.yaml`, `.env` y `secure-connect-*.zip` están en `.gitignore`.
 - Landing es de solo lectura para el pipeline; `--reset` borra únicamente bronze/silver/gold/quarantine/_checkpoints y aborta si Landing quedara dentro de una de esas carpetas (test en `tests/test_pipeline.py`).
 - `users.email` es dato personal: hoy solo llega a Bronze; no se publica en Silver/Gold ni en Cassandra. Enmascararlo si se construye `silver/users` (backlog).

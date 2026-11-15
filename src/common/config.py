@@ -13,7 +13,22 @@ def _resolve(path_str: str) -> Path:
     return p if p.is_absolute() else ROOT / p
 
 
+def load_dotenv(env_file: Path | None = None) -> None:
+    """Carga un archivo .env (KEY=VALUE) en el entorno sin pisar variables ya definidas.
+    El .env está en .gitignore: las credenciales nunca se versionan (D8)."""
+    env_file = env_file or ROOT / ".env"
+    if not env_file.exists():
+        return
+    for line in env_file.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
 def load_config(path: str | None = None) -> dict:
+    load_dotenv()
     if path is None:
         path = os.getenv("TP_CONFIG")
     if path is None:
@@ -31,6 +46,9 @@ def load_config(path: str | None = None) -> dict:
     cas["mode"] = os.getenv("CASSANDRA_MODE", cas.get("mode", "local"))
     if os.getenv("CASSANDRA_HOST"):
         cas["hosts"] = [os.environ["CASSANDRA_HOST"]]
+    if os.getenv("ASTRA_KEYSPACE"):
+        cas["keyspace"] = os.environ["ASTRA_KEYSPACE"]
+    cas["token"] = os.getenv("ASTRA_TOKEN") or None
     for k in ("secure_connect_bundle", "client_id", "client_secret"):
         v = os.path.expandvars(str(cas.get(k) or ""))
         cas[k] = None if (not v or v.startswith("${")) else v

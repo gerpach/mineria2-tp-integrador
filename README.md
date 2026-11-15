@@ -62,7 +62,7 @@ pip install -r requirements.txt
 ```bash
 docker compose -f infra/docker-compose.yml up -d          # esperar ~60 s
 ```
-Opción AstraDB: `export CASSANDRA_MODE=astra ASTRA_BUNDLE_PATH=/ruta/secure-connect.zip ASTRA_CLIENT_ID=... ASTRA_CLIENT_SECRET=...` y crear el keyspace `cloud_analytics` desde la consola de Astra.
+Opción AstraDB: copiar `.env.example` a `.env` (está en `.gitignore`) y completar `CASSANDRA_MODE=astra`, `ASTRA_BUNDLE_PATH` (secure connect bundle) y `ASTRA_TOKEN` (token de aplicación `AstraCS:...`). El pipeline lee `.env` solo. El keyspace `cloud_analytics` se crea desde la consola de Astra; la tabla la crea el pipeline.
 
 ### 3. Correr el pipeline
 ```bash
@@ -75,6 +75,9 @@ python -m src.pipeline
 
 # Sin Cassandra disponible:
 python -m src.pipeline --skip serving
+
+# AstraDB cuando la red bloquea el puerto CQL (usa la Data API por HTTPS; ASTRA_TOKEN y ASTRA_DB_ID en .env):
+python -m src.pipeline --skip serving && python -m src.jobs.serving_astra_api
 ```
 Cada corrida escribe el log `evidence/entrega2/logs/pipeline_<run_id>.log`, `evidence/entrega2/run_summary.md` (rutas, archivos, tamaños, conteos) y `evidence/entrega2/cassandra_queries.md`.
 
@@ -121,10 +124,11 @@ docker compose -f infra/docker-compose.yml down    # baja Cassandra
 | [experimentos.md](evidence/entrega2/experimentos.md) | Dedup y late data con experimentos controlados |
 | [idempotencia.md](evidence/entrega2/idempotencia.md) | Re-ejecución completa: diferencia 0 en todas las capas y en Cassandra |
 | [anomalias.md](evidence/entrega2/anomalias.md) | Componente analítico (MAD): métricas y limitaciones |
-| [cassandra_queries.md](evidence/entrega2/cassandra_queries.md), [cqlsh_salida.md](evidence/entrega2/cqlsh_salida.md) | CQL y resultados de las dos consultas |
+| [cassandra_queries.md](evidence/entrega2/cassandra_queries.md), [cqlsh_salida.md](evidence/entrega2/cqlsh_salida.md) | CQL y resultados de las dos consultas (Cassandra local) |
+| [astra_queries.md](evidence/entrega2/astra_queries.md) | Carga en **AstraDB** (11 050 filas, re-carga sin duplicados) y las dos consultas |
 | [logs/](evidence/entrega2/logs/) | Logs de las corridas |
 
-Resultados principales: 43 200 eventos en Bronze (0 duplicados, 0 descartados por watermark) → 40 956 en Silver + 2 244 en quarantine (Q2: 211, Q3: 2 033) → 11 050 filas en Gold (grano único) → 11 050 filas en Cassandra; 123 anomalías de costo.
+Resultados principales: 43 200 eventos en Bronze (0 duplicados, 0 descartados por watermark) → 40 956 en Silver + 2 244 en quarantine (Q2: 211, Q3: 2 033) → 11 050 filas en Gold (grano único) → 11 050 filas en Cassandra local y en AstraDB; 123 anomalías de costo.
 
 ## Evidencia de exploración (Primera entrega)
 ```bash
