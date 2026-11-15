@@ -1,0 +1,136 @@
+{
+  "dedup": {
+    "watermark": "61 days",
+    "archivos": [
+      {
+        "archivo": "f1_original.jsonl",
+        "lineas": 200
+      },
+      {
+        "archivo": "f2_reingesta_mismo_contenido.jsonl",
+        "lineas": 200
+      },
+      {
+        "archivo": "f3_solapado.jsonl",
+        "lineas": 152
+      }
+    ],
+    "lineas_entrada": 552,
+    "event_id_unicos_esperados": 300,
+    "micro_lotes": [
+      {
+        "batch": 0,
+        "filas_leidas": 200
+      },
+      {
+        "batch": 1,
+        "filas_leidas": 200
+      },
+      {
+        "batch": 2,
+        "filas_leidas": 152
+      },
+      {
+        "batch": 3,
+        "filas_leidas": 0
+      }
+    ],
+    "bronze_filas": 300,
+    "bronze_event_id_distintos": 300,
+    "reejecucion_mismo_checkpoint_filas_leidas": 0,
+    "reejecucion_mismo_checkpoint_bronze_filas": 300,
+    "sin_checkpoint_bronze_filas": 300,
+    "sin_checkpoint_silver_filas": 300,
+    "ok": true
+  },
+  "late_10min": {
+    "watermark": "10 minutes",
+    "micro_lotes": [
+      {
+        "batch": 0,
+        "archivo": "b1_agosto_parte1.jsonl",
+        "filas_leidas": 150,
+        "descartadas_por_watermark": 0,
+        "watermark_al_iniciar_lote": "1970-01-01T00:00:00.000Z"
+      },
+      {
+        "batch": 1,
+        "archivo": "b2_agosto_parte2.jsonl",
+        "filas_leidas": 150,
+        "descartadas_por_watermark": 0,
+        "watermark_al_iniciar_lote": "2025-08-31T23:41:00.000Z"
+      },
+      {
+        "batch": 2,
+        "archivo": "b3_tardios_julio.jsonl",
+        "filas_leidas": 200,
+        "descartadas_por_watermark": 200,
+        "watermark_al_iniciar_lote": "2025-08-31T23:41:00.000Z"
+      },
+      {
+        "batch": 3,
+        "archivo": "b4_muy_tardios_junio.jsonl",
+        "filas_leidas": 5,
+        "descartadas_por_watermark": 5,
+        "watermark_al_iniciar_lote": "2025-08-31T23:41:00.000Z"
+      }
+    ],
+    "escritas_por_archivo": {
+      "b1_agosto_parte1.jsonl": 150,
+      "b2_agosto_parte2.jsonl": 150,
+      "b3_tardios_julio.jsonl": 0,
+      "b4_muy_tardios_junio.jsonl": 0
+    },
+    "entrada_por_archivo": {
+      "b1_agosto_parte1.jsonl": 150,
+      "b2_agosto_parte2.jsonl": 150,
+      "b3_tardios_julio.jsonl": 200,
+      "b4_muy_tardios_junio.jsonl": 5
+    }
+  },
+  "late_config": {
+    "watermark": "61 days",
+    "micro_lotes": [
+      {
+        "batch": 0,
+        "archivo": "b1_agosto_parte1.jsonl",
+        "filas_leidas": 150,
+        "descartadas_por_watermark": 0,
+        "watermark_al_iniciar_lote": "1970-01-01T00:00:00.000Z"
+      },
+      {
+        "batch": 1,
+        "archivo": "b2_agosto_parte2.jsonl",
+        "filas_leidas": 150,
+        "descartadas_por_watermark": 0,
+        "watermark_al_iniciar_lote": "2025-07-01T23:51:00.000Z"
+      },
+      {
+        "batch": 2,
+        "archivo": "b3_tardios_julio.jsonl",
+        "filas_leidas": 200,
+        "descartadas_por_watermark": 0,
+        "watermark_al_iniciar_lote": "2025-07-01T23:51:00.000Z"
+      },
+      {
+        "batch": 3,
+        "archivo": "b4_muy_tardios_junio.jsonl",
+        "filas_leidas": 5,
+        "descartadas_por_watermark": 5,
+        "watermark_al_iniciar_lote": "2025-07-01T23:51:00.000Z"
+      }
+    ],
+    "escritas_por_archivo": {
+      "b1_agosto_parte1.jsonl": 150,
+      "b2_agosto_parte2.jsonl": 150,
+      "b3_tardios_julio.jsonl": 200,
+      "b4_muy_tardios_junio.jsonl": 0
+    },
+    "entrada_por_archivo": {
+      "b1_agosto_parte1.jsonl": 150,
+      "b2_agosto_parte2.jsonl": 150,
+      "b3_tardios_julio.jsonl": 200,
+      "b4_muy_tardios_junio.jsonl": 5
+    }
+  }
+}

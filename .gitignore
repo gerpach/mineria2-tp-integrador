@@ -6,3 +6,8 @@ secure-connect-*.zip
 datalake/
 __pycache__/
 .ipynb_checkpoints/
+.venv/
+.pytest_cache/
+spark-warehouse/
+metastore_db/
+derby.log

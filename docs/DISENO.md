@@ -1,4 +1,6 @@
 # Minería II - Trabajo Práctico Integrador— Documento de diseño (Primera entrega)
+
+> Versión 1.0 de la Primera entrega (07/10/2026). La arquitectura **implementada** en la Segunda entrega está en [ARQUITECTURA_v2.md](ARQUITECTURA_v2.md); las correcciones, en [PLAN_CORRECCIONES.md](PLAN_CORRECCIONES.md).
 Minería de Datos II · ISTEA · 2C 2026 · Versión 1.0 (07/10/2026)
 
 ## 1. Problema, usuarios y objetivos medibles

@@ -1,0 +1,6 @@
+2026-11-15 18:26:24,321 INFO [tp] run_id=20261115T182624Z landing=datalake/landing lake=datalake
+2026-11-15 18:26:26,712 INFO [tp] reset: borrado datalake/bronze
+2026-11-15 18:26:26,746 INFO [tp] reset: borrado datalake/silver
+2026-11-15 18:26:26,767 INFO [tp] reset: borrado datalake/gold
+2026-11-15 18:26:26,770 INFO [tp] reset: borrado datalake/quarantine
+2026-11-15 18:26:26,827 INFO [tp] reset: borrado datalake/_checkpoints

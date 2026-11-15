@@ -1,0 +1,439 @@
+{
+  "run_id": "20261115T182626Z",
+  "landing": "datalake/landing",
+  "watermark": "61 days",
+  "results": {
+    "bronze_batch": {
+      "customers_orgs": {
+        "landing_rows": 80,
+        "corrupt_rows": 0,
+        "bronze_rows": 80,
+        "duplicates_removed": 0,
+        "path": "datalake/bronze/customers_orgs"
+      },
+      "users": {
+        "landing_rows": 800,
+        "corrupt_rows": 0,
+        "bronze_rows": 800,
+        "duplicates_removed": 0,
+        "path": "datalake/bronze/users"
+      },
+      "billing_monthly": {
+        "landing_rows": 240,
+        "corrupt_rows": 0,
+        "bronze_rows": 240,
+        "duplicates_removed": 0,
+        "path": "datalake/bronze/billing_monthly"
+      },
+      "resources": {
+        "landing_rows": 400,
+        "corrupt_rows": 0,
+        "bronze_rows": 400,
+        "duplicates_removed": 0,
+        "path": "datalake/bronze/resources"
+      },
+      "seconds": 7.6
+    },
+    "bronze_stream": {
+      "micro_batches": 24,
+      "input_rows_this_run": 43200,
+      "dropped_by_watermark": 0,
+      "bronze_rows_total": 43200,
+      "path": "datalake/bronze/usage_events",
+      "checkpoint": "datalake/_checkpoints/bronze_usage_events",
+      "progress": [
+        {
+          "batch_id": 0,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 1800,
+          "watermark": "1970-01-01T00:00:00.000Z"
+        },
+        {
+          "batch_id": 1,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 3600,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 2,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 5400,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 3,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 7200,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 4,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 9000,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 5,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 10800,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 6,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 12600,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 7,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 14400,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 8,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 16200,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 9,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 18000,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 10,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 19800,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 11,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 21600,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 12,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 23400,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 13,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 25200,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 14,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 27000,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 15,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 28800,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 16,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 30600,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 17,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 32400,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 18,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 34200,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 19,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 36000,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 20,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 37800,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 21,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 39600,
+          "watermark": "2025-07-01T23:56:00.000Z"
+        },
+        {
+          "batch_id": 22,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 41400,
+          "watermark": "2025-07-01T23:58:00.000Z"
+        },
+        {
+          "batch_id": 23,
+          "input_rows": 1800,
+          "rows_dropped_by_watermark": 0,
+          "state_rows": 43200,
+          "watermark": "2025-07-01T23:58:00.000Z"
+        }
+      ],
+      "seconds": 31.8
+    },
+    "silver": {
+      "bronze_rows": 43200,
+      "duplicates_removed": 0,
+      "silver_rows": 40956,
+      "quarantine_rows": 2244,
+      "quarantine_by_rule": {
+        "Q3_unit_null_with_value": 2033,
+        "Q2_cost_below_min": 211
+      },
+      "flags": {
+        "flag_value_cast_failed": 0,
+        "flag_cost_spike": 46,
+        "flag_event_before_resource": 7006,
+        "flag_genai_tokens_out_of_rule": 0
+      },
+      "schema_versions": {
+        "2": 30755,
+        "1": 10201
+      },
+      "path": "datalake/silver/usage_events",
+      "quarantine_path": "datalake/quarantine/usage_events",
+      "seconds": 15.4
+    },
+    "gold": {
+      "rows": 11050,
+      "distinct_grain_keys": 11050,
+      "anomalies": 123,
+      "path": "datalake/gold/org_daily_usage_by_service",
+      "cost_total_usd": 141241.43,
+      "seconds": 4.5
+    },
+    "serving": {
+      "keyspace": "cloud_analytics",
+      "table": "org_daily_usage_by_service",
+      "rows_before": 0,
+      "rows_loaded": 11050,
+      "rows_after": 11050,
+      "queries": [
+        {
+          "name": "Consulta 1: costos y requests diarios por org y servicio en un rango",
+          "cql": "SELECT usage_date, daily_cost_usd, requests, cpu_hours, storage_gb_hours, is_cost_anomaly\nFROM cloud_analytics.org_daily_usage_by_service\nWHERE org_id = :org_id AND service = :service\n  AND usage_date >= :date_from AND usage_date <= :date_to",
+          "params": {
+            "org_id": "org_ktakpuxq",
+            "service": "compute",
+            "date_from": "2025-08-25",
+            "date_to": "2025-08-31"
+          },
+          "rows": [
+            {
+              "usage_date": "2025-08-31",
+              "daily_cost_usd": 27.9866,
+              "requests": 344.0,
+              "cpu_hours": 5.3458,
+              "storage_gb_hours": 8.0952,
+              "is_cost_anomaly": false
+            },
+            {
+              "usage_date": "2025-08-30",
+              "daily_cost_usd": 21.9982,
+              "requests": 225.0,
+              "cpu_hours": 3.5113,
+              "storage_gb_hours": 34.3998,
+              "is_cost_anomaly": false
+            },
+            {
+              "usage_date": "2025-08-29",
+              "daily_cost_usd": 10.2654,
+              "requests": 123.0,
+              "cpu_hours": 2.6513,
+              "storage_gb_hours": 3.928,
+              "is_cost_anomaly": false
+            },
+            {
+              "usage_date": "2025-08-28",
+              "daily_cost_usd": 49.3702,
+              "requests": 469.0,
+              "cpu_hours": 4.2299,
+              "storage_gb_hours": 72.4386,
+              "is_cost_anomaly": false
+            },
+            {
+              "usage_date": "2025-08-27",
+              "daily_cost_usd": 65.1642,
+              "requests": 715.0,
+              "cpu_hours": 1.7885,
+              "storage_gb_hours": 7.3014,
+              "is_cost_anomaly": false
+            },
+            {
+              "usage_date": "2025-08-26",
+              "daily_cost_usd": 69.17,
+              "requests": 828.0,
+              "cpu_hours": 1.8858,
+              "storage_gb_hours": 54.9735,
+              "is_cost_anomaly": false
+            },
+            {
+              "usage_date": "2025-08-25",
+              "daily_cost_usd": 28.2485,
+              "requests": 338.0,
+              "cpu_hours": 4.835,
+              "storage_gb_hours": 22.3314,
+              "is_cost_anomaly": false
+            }
+          ]
+        },
+        {
+          "name": "Consulta 2: Top-N servicios por costo, últimos 14 días",
+          "cql": "SELECT service, SUM(daily_cost_usd) AS cost_14d_usd, SUM(requests) AS requests_14d\nFROM cloud_analytics.org_daily_usage_by_service\nWHERE org_id = :org_id\n  AND service IN ('analytics', 'compute', 'database', 'genai', 'networking', 'storage')\n  AND usage_date >= :date_from AND usage_date <= :date_to\nGROUP BY org_id, service",
+          "params": {
+            "org_id": "org_ktakpuxq",
+            "date_from": "2025-08-18",
+            "date_to": "2025-08-31"
+          },
+          "rows": [
+            {
+              "service": "compute",
+              "cost_14d_usd": 626.9616,
+              "requests_14d": 6990.0
+            },
+            {
+              "service": "genai",
+              "cost_14d_usd": 140.6273,
+              "requests_14d": 1115.0
+            },
+            {
+              "service": "database",
+              "cost_14d_usd": 59.3881,
+              "requests_14d": 1180.0
+            },
+            {
+              "service": "networking",
+              "cost_14d_usd": 8.2631,
+              "requests_14d": 733.0
+            }
+          ]
+        }
+      ],
+      "seconds": 3.8
+    }
+  },
+  "storage": [
+    {
+      "tabla": "bronze/customers_orgs",
+      "ruta": "datalake/bronze/customers_orgs",
+      "parquet_files": 1,
+      "partitions": 1,
+      "size_kb": 6.9,
+      "avg_file_kb": 6.9
+    },
+    {
+      "tabla": "bronze/users",
+      "ruta": "datalake/bronze/users",
+      "parquet_files": 1,
+      "partitions": 1,
+      "size_kb": 23.5,
+      "avg_file_kb": 23.5
+    },
+    {
+      "tabla": "bronze/billing_monthly",
+      "ruta": "datalake/bronze/billing_monthly",
+      "parquet_files": 1,
+      "partitions": 1,
+      "size_kb": 12.0,
+      "avg_file_kb": 12.0
+    },
+    {
+      "tabla": "bronze/resources",
+      "ruta": "datalake/bronze/resources",
+      "parquet_files": 1,
+      "partitions": 1,
+      "size_kb": 11.8,
+      "avg_file_kb": 11.8
+    },
+    {
+      "tabla": "bronze/usage_events",
+      "ruta": "datalake/bronze/usage_events",
+      "parquet_files": 1440,
+      "partitions": 60,
+      "size_kb": 10894.9,
+      "avg_file_kb": 7.6
+    },
+    {
+      "tabla": "silver/customers_orgs",
+      "ruta": "datalake/silver/customers_orgs",
+      "parquet_files": 1,
+      "partitions": 1,
+      "size_kb": 7.2,
+      "avg_file_kb": 7.2
+    },
+    {
+      "tabla": "silver/resources",
+      "ruta": "datalake/silver/resources",
+      "parquet_files": 1,
+      "partitions": 1,
+      "size_kb": 12.9,
+      "avg_file_kb": 12.9
+    },
+    {
+      "tabla": "silver/usage_events",
+      "ruta": "datalake/silver/usage_events",
+      "parquet_files": 60,
+      "partitions": 60,
+      "size_kb": 3220.9,
+      "avg_file_kb": 53.7
+    },
+    {
+      "tabla": "quarantine/usage_events",
+      "ruta": "datalake/quarantine/usage_events",
+      "parquet_files": 8,
+      "partitions": 2,
+      "size_kb": 219.1,
+      "avg_file_kb": 27.4
+    },
+    {
+      "tabla": "gold/org_daily_usage_by_service",
+      "ruta": "datalake/gold/org_daily_usage_by_service",
+      "parquet_files": 60,
+      "partitions": 60,
+      "size_kb": 895.1,
+      "avg_file_kb": 14.9
+    }
+  ]
+}

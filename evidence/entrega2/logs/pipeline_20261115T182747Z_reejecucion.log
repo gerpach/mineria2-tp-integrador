@@ -1,0 +1,18 @@
+2026-11-15 18:27:47,899 INFO [tp] === etapa bronze_batch ===
+2026-11-15 18:27:49,630 INFO [tp.bronze_batch] bronze/customers_orgs: landing=80 corruptas=0 bronze=80
+2026-11-15 18:27:50,530 INFO [tp.bronze_batch] bronze/users: landing=800 corruptas=0 bronze=800
+2026-11-15 18:27:51,202 INFO [tp.bronze_batch] bronze/billing_monthly: landing=240 corruptas=0 bronze=240
+2026-11-15 18:27:51,856 INFO [tp.bronze_batch] bronze/resources: landing=400 corruptas=0 bronze=400
+2026-11-15 18:27:51,856 INFO [tp] === etapa bronze_stream ===
+2026-11-15 18:27:51,857 INFO [tp.bronze_stream] streaming desde datalake/landing/usage_events_stream | watermark=61 days | maxFilesPerTrigger=5
+2026-11-15 18:27:52,151 INFO [tp.bronze_stream] micro-lote {"batch_id": 24, "input_rows": 0, "rows_dropped_by_watermark": 0, "state_rows": 0, "watermark": "2025-07-01T23:58:00.000Z"}
+2026-11-15 18:27:53,256 INFO [tp.bronze_stream] bronze/usage_events: leídas en esta corrida=0 micro-lotes=1 total en bronze=43200
+2026-11-15 18:27:53,256 INFO [tp] === etapa silver ===
+2026-11-15 18:28:09,679 INFO [tp.silver] silver/usage_events=40956 quarantine=2244 por regla={'Q3_unit_null_with_value': 2033, 'Q2_cost_below_min': 211} duplicados=0
+2026-11-15 18:28:09,680 INFO [tp] === etapa gold ===
+2026-11-15 18:28:13,155 INFO [tp.gold] gold/org_daily_usage_by_service filas=11050 claves únicas=11050 anomalías=123
+2026-11-15 18:28:14,136 INFO [tp] === etapa serving ===
+2026-11-15 18:28:17,343 INFO [tp.serving] Consulta 1: costos y requests diarios por org y servicio en un rango -> 7 filas
+2026-11-15 18:28:17,356 INFO [tp.serving] Consulta 2: Top-N servicios por costo, últimos 14 días -> 4 filas
+2026-11-15 18:28:17,356 INFO [tp.serving] cassandra cloud_analytics.org_daily_usage_by_service: antes=11050 cargadas=11050 después=11050
+2026-11-15 18:28:19,561 INFO [tp] idempotencia ok=True
