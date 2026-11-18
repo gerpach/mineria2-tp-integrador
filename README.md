@@ -15,10 +15,10 @@ Pipeline ETL + Streaming + Serving para un proveedor de nube: PySpark, Structure
 ## Equipo
 | Integrante | Rol principal | Rol de apoyo |
 |---|---|---|
-| Giuliano Gambino | A definir | A definir |
-| Gabriela Romero | A definir | A definir |
-| Mayra Garate | A definir | A definir |
-| Germán Pacheco | A definir | A definir |
+| Giuliano Gambino | Silver, Gold y anomalías | Serving Cassandra/AstraDB y consultas |
+| Gabriela Romero | Serving Cassandra/AstraDB y consultas | Ingesta batch y streaming (Bronze) |
+| Mayra Garate | Ingesta batch y streaming (Bronze) | Calidad, quarantine y gobierno |
+| Germán Pacheco | Calidad, quarantine y gobierno | Silver, Gold y anomalías |
 
 Los roles se definirán en el plan de correcciones posterior al feedback del 07/10 (ver `docs/`).
 
