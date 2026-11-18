@@ -41,11 +41,11 @@ Linaje de punta a punta: `landing/usage_events_stream/events_part_XXXX.jsonl` �
 
 | Área | Responsable |
 |---|---|
-| Ingesta batch y streaming (Bronze) | _a definir_ |
-| Calidad, quarantine y gobierno | _a definir_ |
-| Silver, Gold y anomalías | _a definir_ |
-| Serving Cassandra/AstraDB y consultas | _a definir_ |
-| Documentación, evidencias y defensa | _a definir_ |
+| Ingesta batch y streaming (Bronze) | Mayra Garate |
+| Calidad, quarantine y gobierno | Germán Pacheco |
+| Silver, Gold y anomalías | Giuliano Gambino |
+| Serving Cassandra/AstraDB y consultas | Gabriela Romero |
+| Documentación, evidencias y defensa | Todos |
 
 ## Observabilidad
 
