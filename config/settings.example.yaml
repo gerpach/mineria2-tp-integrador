@@ -1,15 +1,32 @@
 # Copiar a config/settings.yaml (NO versionar) o definir variables de entorno equivalentes.
+# Los defaults de este archivo reflejan las decisiones CERRADAS de DECISIONS.md (ver tests/test_config.py).
 paths:
-  landing_dir:  "F:/Istea/Año2/MineríaDatos2/Proyecto/datalake/landing"
-  lake_root:    "F:/Istea/Año2/MineríaDatos2/Proyecto/datalake"   # bronze/ silver/ gold/ quarantine/ checkpoints/
+  # Por defecto usa la muestra versionada (corre desde un entorno limpio).
+  # Datos completos: LANDING_DIR="F:/Istea/Año2/MineríaDatos2/Proyecto/datalake/landing"
+  landing_dir: "data/sample"
+  lake_root:   "datalake"          # bronze/ silver/ gold/ quarantine/ _checkpoints/ (fuera del repo, .gitignore)
 streaming:
   max_files_per_trigger: 5
-  watermark: "61 days"          # D9: cada archivo cubre todo el rango temporal
+  # D9 (Aprobada): cada archivo de eventos cubre todo el rango 03/07-31/08 (~60 días).
+  # NO usar "10 minutes": descartaría como tardíos casi todos los eventos válidos (ver evidence/entrega2/experimentos.md).
+  watermark: "61 days"
   trigger: "availableNow"
+write:
+  # D10: archivos por partición al escribir Silver/Gold. 1 = compactación para el dataset de la demo
+  # (~720 eventos/día). En producción: null (Spark decide) o un número acorde al volumen.
+  coalesce: 1
 quality:
-  min_cost_increment_usd: -0.01
-cassandra:                       # credenciales SOLO por entorno, nunca en el repo
+  min_cost_increment_usd: -0.01    # Q2
+  spike_cost_usd: 100              # marca de spike (contexto para anomalías)
+anomaly:                           # D6: MAD robusto por org + servicio sobre daily_cost_usd
+  threshold: 3.5                   # |robust_z| > 3.5 (Iglewicz & Hoaglin)
+  min_days: 7                      # mínimo de días por org+servicio para puntuar
+cassandra:
+  mode: "local"                    # local (Docker, infra/) | astra
+  hosts: ["127.0.0.1"]
+  port: 9042
+  keyspace: "cloud_analytics"
+  # Astra: credenciales SOLO por entorno, nunca en el repo
   secure_connect_bundle: "${ASTRA_BUNDLE_PATH}"
   client_id: "${ASTRA_CLIENT_ID}"
   client_secret: "${ASTRA_CLIENT_SECRET}"
-  keyspace: "cloud_analytics"

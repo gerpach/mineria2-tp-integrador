@@ -1,0 +1,67 @@
+{
+  "rows": [
+    {
+      "tabla": "bronze/customers_orgs",
+      "antes_de_reejecutar": 80,
+      "despues_de_reejecutar": 80,
+      "diferencia": 0
+    },
+    {
+      "tabla": "bronze/users",
+      "antes_de_reejecutar": 800,
+      "despues_de_reejecutar": 800,
+      "diferencia": 0
+    },
+    {
+      "tabla": "bronze/billing_monthly",
+      "antes_de_reejecutar": 240,
+      "despues_de_reejecutar": 240,
+      "diferencia": 0
+    },
+    {
+      "tabla": "bronze/resources",
+      "antes_de_reejecutar": 400,
+      "despues_de_reejecutar": 400,
+      "diferencia": 0
+    },
+    {
+      "tabla": "bronze/usage_events",
+      "antes_de_reejecutar": 43200,
+      "despues_de_reejecutar": 43200,
+      "diferencia": 0
+    },
+    {
+      "tabla": "silver/usage_events",
+      "antes_de_reejecutar": 40956,
+      "despues_de_reejecutar": 40956,
+      "diferencia": 0
+    },
+    {
+      "tabla": "quarantine/usage_events",
+      "antes_de_reejecutar": 2244,
+      "despues_de_reejecutar": 2244,
+      "diferencia": 0
+    },
+    {
+      "tabla": "gold/org_daily_usage_by_service",
+      "antes_de_reejecutar": 11050,
+      "despues_de_reejecutar": 11050,
+      "diferencia": 0
+    },
+    {
+      "tabla": "gold: suma daily_cost_usd",
+      "antes_de_reejecutar": 141241.4284,
+      "despues_de_reejecutar": 141241.4284,
+      "diferencia": 0.0
+    },
+    {
+      "tabla": "cassandra org_daily_usage_by_service (COUNT)",
+      "antes_de_reejecutar": 11050,
+      "despues_de_reejecutar": 11050,
+      "diferencia": 0
+    }
+  ],
+  "ok": true,
+  "stream_rows_read_on_rerun": 0,
+  "cassandra_rows_reloaded": 11050
+}

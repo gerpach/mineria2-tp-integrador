@@ -1,0 +1,2 @@
+2026-11-15 19:26:39,527 INFO [tp.serving_astra_api] astra cloud_analytics.org_daily_usage_by_service: antes=11050 cargadas=11050 después=11050
+2026-11-15 19:26:42,548 INFO [tp.serving_astra_api] consulta1=7 filas consulta2=4 filas

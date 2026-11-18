@@ -1,6 +1,6 @@
-pyspark==3.5.*
+pyspark==3.5.3
 pandas>=2.0
 tabulate
 pyyaml
-cassandra-driver
+cassandra-driver>=3.29
 pytest

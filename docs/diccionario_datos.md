@@ -1,4 +1,6 @@
-# Diccionario de datos inicial (Landing)
+# Diccionario de datos
+
+## Landing (fuentes)
 Columnas tomadas del perfil real de los CSV. Esquema de `usage_events_stream` obtenido del perfil de los 120 archivos (43 200 eventos).
 
 | Fuente | Columna | Tipo propuesto (Bronze) | Nota |
@@ -39,3 +41,49 @@ Columnas tomadas del perfil real de los CSV. Esquema de `usage_events_stream` ob
 | usage_events | genai_tokens | long | Solo v2 y servicio `genai` (3 132 eventos) |
 | *todas (Bronze)* | ingest_ts | timestamp | Columna técnica |
 | *todas (Bronze)* | source_file | string | Columna técnica |
+
+
+## Bronze (Parquet)
+
+| Tabla | Partición | Columnas | Nota |
+|---|---|---|---|
+| bronze/customers_orgs, users, billing_monthly, resources | `ingest_date` | columnas de Landing con el tipo de arriba + `_corrupt_record`, `source_file`, `ingest_ts`, `pipeline_run_id` | dedupe por clave natural; una foto por día |
+| bronze/usage_events | `event_date` | columnas del evento (`timestamp` → `event_ts`; `value` como **string**) + `_corrupt_record`, `source_file`, `ingest_ts`, `pipeline_run_id` | `value` se castea en Silver (Q4) |
+
+## Silver (Parquet)
+
+| Tabla | Columna | Tipo | Nota |
+|---|---|---|---|
+| silver/usage_events | event_id, org_id, resource_id, service, region, metric, unit | string | texto normalizado (lower/trim) |
+| | event_ts / usage_date | timestamp / date | partición `usage_date` (UTC) |
+| | value_num | double | `value` casteado; NULL si no es numérico |
+| | cost_usd_increment, cost_usd | double | `cost_usd` = feature de costo |
+| | requests, cpu_hours, storage_gb_hours | double | features: pivot de `metric` |
+| | carbon_kg, genai_tokens | double, long | NULL en v1 (compatibilidad v1/v2) |
+| | schema_version | int | 1 o 2 |
+| | resource_created_at | date | join con resources |
+| | org_name, industry, plan_tier, is_enterprise, hq_region | — | join con customers_orgs |
+| | flag_value_cast_failed, flag_cost_anomaly, flag_cost_spike, flag_event_before_resource, flag_genai_tokens_out_of_rule | boolean | flags de calidad (no bloquean) |
+| | source_file, ingest_ts, pipeline_run_id, silver_run_id | — | linaje |
+| silver/customers_orgs | columnas del maestro + `flag_nps_out_of_range` | — | `nps_score` fuera de [-100, 100] → NULL |
+| silver/resources | columnas del maestro + `tags` (array<string>) | — | `tags_json` parseado |
+| quarantine/usage_events | columnas del evento + `quarantine_reasons` (array), `rule_id`, `quarantine_run_id` | — | partición `rule_id` |
+
+## Gold: `org_daily_usage_by_service` (grano `org_id, usage_date, service`)
+
+| Columna | Tipo | Cálculo |
+|---|---|---|
+| org_id, usage_date, service | string, date, string | clave del grano |
+| daily_cost_usd | double | Σ `cost_usd` del día |
+| requests, cpu_hours, storage_gb_hours | double | Σ de cada métrica |
+| genai_tokens | long | Σ tokens (solo genai v2) |
+| carbon_kg | double | Σ carbono (solo v2) |
+| events_count, spike_events | long | eventos del día y cuántos con costo ≥ 100 USD |
+| cost_median_org_service | double | mediana del costo diario de la org+servicio |
+| cost_robust_z, is_cost_anomaly | double, boolean | score MAD y flag (`|z| > 3.5`) |
+| org_name, industry, plan_tier | string | contexto |
+| gold_run_id | string | linaje |
+
+## Cassandra: `cloud_analytics.org_daily_usage_by_service`
+
+Mismas columnas que Gold (sin `cost_median_org_service`). `PRIMARY KEY ((org_id, service), usage_date)`, `CLUSTERING ORDER BY (usage_date DESC)`. Ver `cql/01_schema.cql`.
